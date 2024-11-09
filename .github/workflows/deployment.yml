@@ -35,9 +35,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build \
-          --build-arg PORT=$PORT \ 
-          -t asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/go-autoscale:$TAG .
+          docker build --build-arg PORT=$PORT -t asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/go-autoscale:$TAG .
       
       - name: Configure gcloud CLI
         run: |
