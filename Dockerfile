@@ -6,6 +6,7 @@ COPY . .
 
 RUN go mod tidy
 
+ARG PORT
 ENV PORT=$PORT
 
 RUN GOOS=linux go build -o go-autoscale
