@@ -12,7 +12,7 @@ import (
 
 func Root(w http.ResponseWriter, r *http.Request) {
 	resp := response.SuccessResp{
-		Data:       "hello from go-autoscale",
+		Data:       "welcome to my app, go autocale will simulte the autoscaling with simple go app",
 		StatusCode: http.StatusOK,
 	}
 
