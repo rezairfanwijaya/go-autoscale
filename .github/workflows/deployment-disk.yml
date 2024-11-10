@@ -6,6 +6,7 @@ on:
 env: 
   PORT: ${{ vars.PORT }}
   APP_NAME: ${{ vars.APP_NAME }}
+  SCP_SOURCE: ${{github.event.repository.name}},${{github.event.repository.name}}.conf
 
 jobs:
   deployment:
@@ -35,6 +36,7 @@ jobs:
           APP_NAME='$APP_NAME'
           " > $APP_NAME.conf
           cat $APP_NAME.conf
+          echo $SCP_SOURCE
       
       - name: check executable
         run: ls 
@@ -46,7 +48,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
-          source: "${{ env.APP_NAME }}"
+          source: $SCP_SOURCE
           target: ./
 
       - name: restart service
