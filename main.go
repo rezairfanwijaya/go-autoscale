@@ -26,9 +26,13 @@ func main() {
 
 func getEnv() map[string]string {
 	v := viper.New()
+	v.AutomaticEnv()
 	v.SetConfigName("application")
 	v.SetConfigType("yaml")
 
+	v.AddConfigPath("../../../")
+	v.AddConfigPath("../../")
+	v.AddConfigPath("../")
 	v.AddConfigPath(".")
 
 	err := v.ReadInConfig()
