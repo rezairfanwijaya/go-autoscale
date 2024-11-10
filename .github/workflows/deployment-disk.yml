@@ -28,13 +28,13 @@ jobs:
           GOOS=linux go build -o $APP_NAME -v
 
       - name: Generate dev env
-      run: |
-        touch $APP_NAME.conf
-        echo "
-        PORT='$PORT'
-        APP_NAME='$APP_NAME'
-        " > $APP_NAME.conf
-        cat $APP_NAME.conf
+        run: |
+          touch $APP_NAME.conf
+          echo "
+          PORT='$PORT'
+          APP_NAME='$APP_NAME'
+          " > $APP_NAME.conf
+          cat $APP_NAME.conf
       
       - name: check executable
         run: ls 
