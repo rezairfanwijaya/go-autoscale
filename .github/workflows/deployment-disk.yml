@@ -1,0 +1,66 @@
+name: Deployment
+
+on: 
+  workflow_dispatch:
+
+env: 
+  PORT: ${{ vars.PORT }}
+  APP_NAME: ${{ vars.APP_NAME }}
+
+jobs:
+  deployment:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - name: setup golang
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+
+      - name: show the app name
+        run : echo "app name $APP_NAME"
+
+      - name: build golang app
+        run: |
+          GOOS=linux go build -o $APP_NAME -v
+      
+      - name: check executable
+        run: ls 
+
+      - name: copy file
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          source: "${{ env.APP_NAME }}"
+          target: ./
+
+      - name: restart service
+        uses: appleboy/ssh-action@v1.1.0
+        env:
+          APP_NAME: ${{ env.APP_NAME }}
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          envs: APP_NAME
+          script: | 
+            echo "app name $APP_NAME"
+            mv ./$APP_NAME /opt/golang/cicd/$APP_NAME
+            systemctl stop $APP_NAME.service
+            systemctl start $APP_NAME.service
+            systemctl status $APP_NAME.service
+
+
+
+      
+      
+
+  
+    
