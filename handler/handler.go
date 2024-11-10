@@ -8,9 +8,11 @@ import (
 
 	"github.com/rezairfanwijaya/go-autoscale.git/model"
 	"github.com/rezairfanwijaya/go-autoscale.git/response"
+	"github.com/sirupsen/logrus"
 )
 
 func Root(w http.ResponseWriter, r *http.Request) {
+	logrus.Info("hit endpoint / ")
 	resp := response.SuccessResp{
 		Data:       "welcome to my app, go autocale will simulte the autoscaling with simple go app",
 		StatusCode: http.StatusOK,
@@ -29,6 +31,7 @@ func Root(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetUserList(w http.ResponseWriter, r *http.Request) {
+	logrus.Info("hit endpoint /users ")
 	limitReq := r.URL.Query().Get("limit")
 	if limitReq == "" {
 		limitReq = "10"

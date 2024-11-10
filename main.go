@@ -4,10 +4,18 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/rezairfanwijaya/go-autoscale.git/handler"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
+
+func init() {
+	logrus.SetFormatter(&logrus.JSONFormatter{})
+	logrus.SetOutput(os.Stdout)
+	logrus.SetLevel(logrus.InfoLevel)
+}
 
 func main() {
 	env := getEnv()
