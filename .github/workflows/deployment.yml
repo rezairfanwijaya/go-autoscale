@@ -63,6 +63,6 @@ jobs:
             --version=template=$TEMPLATE_NAME \
             --project=${{ secrets.GCP_PROJECT_ID }} \
             --max-unavailable=1 \
-            --max-surge=2s \
+            --max-surge=2 \
             --replacement-method=recreate \
             --zone=asia-southeast2-a 
