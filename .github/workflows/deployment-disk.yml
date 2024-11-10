@@ -26,6 +26,15 @@ jobs:
       - name: build golang app
         run: |
           GOOS=linux go build -o $APP_NAME -v
+
+       - name: Generate dev env
+        run: |
+          touch $APP_NAME.conf
+          echo "
+          PORT='$PORT'
+          APP_NAME='$APP_NAME'
+          " > $APP_NAME.conf
+          cat $APP_NAME.conf
       
       - name: check executable
         run: ls 
@@ -53,6 +62,7 @@ jobs:
           script: | 
             echo "app name $APP_NAME"
             mv ./$APP_NAME /opt/golang/cicd/$APP_NAME
+            mv ./$APP_NAME.conf /opt/golang/cicd/$APP_NAME.conf
             systemctl stop $APP_NAME.service
             systemctl start $APP_NAME.service
             systemctl status $APP_NAME.service
