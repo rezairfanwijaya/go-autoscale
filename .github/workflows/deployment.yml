@@ -36,7 +36,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          echo $APP_NAME
+          docker --version
           docker build --build-arg PORT=$PORT --build-arg APP_NAME=$APP_NAME -t asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/$APP_NAME:$TAG .
       
       - name: Configure gcloud CLI
