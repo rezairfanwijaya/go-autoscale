@@ -33,7 +33,7 @@ func getEnv() map[string]string {
 
 	err := v.ReadInConfig()
 	if err != nil {
-		panic(fmt.Errorf("fatal error config file: %w", err))
+		fmt.Println(fmt.Errorf("fatal error config file: %w", err))
 	}
 
 	return map[string]string{
