@@ -29,7 +29,7 @@ jobs:
         run: |
           CURRENT_DATE=$(date +%Y-%m-%d-%H-%M-%S)
           TAG="version-$CURRENT_DATE"
-          TEMPLATE_NAME="go-go-autoscale1-autoscale-cicd-$CURRENT_DATE"
+          TEMPLATE_NAME="go-autoscale-cicd-$CURRENT_DATE"
           echo $TEMPLATE_NAME
           echo "TAG=$TAG" >> $GITHUB_ENV  # Set TAG as an environment variable
           echo "TEMPLATE_NAME=$TEMPLATE_NAME" >> $GITHUB_ENV  # Set TAG as an environment variable
@@ -59,7 +59,7 @@ jobs:
 
       - name: Update managed instance group
         run: |
-          gcloud compute instance-groups managed rolling-action start-update go-autoscale1-group-autoscale-cicd-v3 \
+          gcloud compute instance-groups managed rolling-action start-update go-autoscale-group-cicd \
             --version=template=$TEMPLATE_NAME \
             --project=${{ secrets.GCP_PROJECT_ID }} \
             --max-unavailable=1 \
