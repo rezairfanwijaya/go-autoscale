@@ -25,6 +25,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", handler.Root)
 	mux.HandleFunc("/users", handler.GetUserList)
+	mux.HandleFunc("/cars/private", handler.GetPrivateCar)
 
 	log.Printf("app %s will start the app on port %s\n", appName, port)
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), mux); err != nil {
