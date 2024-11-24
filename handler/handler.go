@@ -8,7 +8,6 @@ import (
 
 	"github.com/rezairfanwijaya/go-autoscale.git/model"
 	"github.com/rezairfanwijaya/go-autoscale.git/response"
-	privatemodel "github.com/rezairfanwijaya/go-private-model/model"
 	"github.com/sirupsen/logrus"
 )
 
@@ -80,29 +79,4 @@ func getUsers(limit int) []model.User {
 	}
 
 	return users
-}
-
-func GetPrivateCar(w http.ResponseWriter, r *http.Request) {
-	logrus.Info("hit endpoint /cars/private ")
-	privareCars := []privatemodel.Car{
-		{
-			Id:    1,
-			Brand: "Toyota",
-		},
-		{
-			Id:    1,
-			Brand: "Mitsubishi",
-		},
-	}
-
-	resp := response.SuccessResp{Data: privareCars}
-	respByte, err := resp.ChangToByte()
-	if err != nil {
-		return
-	}
-
-	_, err = w.Write(respByte)
-	if err != nil {
-		log.Printf("failed to create response get userlist, err: %s", err)
-	}
 }
