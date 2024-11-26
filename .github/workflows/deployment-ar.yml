@@ -2,7 +2,8 @@ name: Deployment Golang Auto Scale
 
 on:
   push:
-    main
+    branches:
+     - 'main'
 
 env: 
   PORT: ${{ vars.PORT }}
