@@ -2,22 +2,22 @@ FROM golang:latest
 
 WORKDIR /app
 
-COPY . .
+COPY go-autoscale .
 
 RUN ls -l
 
-RUN go mod tidy
+# RUN go mod tidy
 
 ARG PORT
-ARG APP_NAME
+# ARG APP_NAME
 
-ENV PORT=${PORT}
-ENV APP_NAME=${APP_NAME}
+# ENV PORT=${PORT}
+# ENV APP_NAME=${APP_NAME}
 
-RUN echo "PORT: \"$PORT\"" > application.yml
-RUN echo "APP_NAME: \"$APP_NAME\"" >> application.yml
+# RUN echo "PORT: \"$PORT\"" > application.yml
+# RUN echo "APP_NAME: \"$APP_NAME\"" >> application.yml
 
-RUN GOOS=linux go build -o go-autoscale
+# RUN GOOS=linux go build -o go-autoscale
 
 EXPOSE ${PORT}
 

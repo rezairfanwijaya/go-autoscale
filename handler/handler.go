@@ -14,7 +14,7 @@ import (
 func Root(w http.ResponseWriter, r *http.Request) {
 	logrus.Info("hit endpoint / ")
 	resp := response.SuccessResp{
-		Data:       "welcome to my app, go autocale will simulte the autoscaling with simple go app",
+		Data:       "welcome to my app, go autocale will simulte the autoscaling with simple go app v3",
 		StatusCode: http.StatusOK,
 	}
 

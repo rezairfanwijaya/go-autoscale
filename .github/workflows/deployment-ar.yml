@@ -22,7 +22,7 @@ jobs:
 
       - name: Build binary
         run: |
-          go build -o myapp
+          go build -o go-autoscale
 
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v1
