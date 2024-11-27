@@ -80,3 +80,8 @@ func getUsers(limit int) []model.User {
 
 	return users
 }
+
+func GetUserWithPanic(w http.ResponseWriter, r *http.Request) {
+	logrus.Info("hit endpoint /users/panic")
+	panic("panic")
+}
