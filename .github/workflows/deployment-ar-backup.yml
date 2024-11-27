@@ -1,7 +1,6 @@
 name: Deployment Golang Auto Scale
 
-on:
-  workflow-dispatch:
+on: workflow_dispatch
 
 env: 
   PORT: ${{ vars.PORT }}
