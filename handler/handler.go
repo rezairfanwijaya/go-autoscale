@@ -14,7 +14,7 @@ import (
 func Root(w http.ResponseWriter, r *http.Request) {
 	logrus.Info("hit endpoint / ")
 	resp := response.SuccessResp{
-		Data:       "welcome to my app, go autocale will simulte the autoscaling with simple go app v4",
+		Data:       "hi devops, go autocale will simulte the autoscaling with simple go app with current version v4",
 		StatusCode: http.StatusOK,
 	}
 
@@ -84,4 +84,34 @@ func getUsers(limit int) []model.User {
 func GetUserWithPanic(w http.ResponseWriter, r *http.Request) {
 	logrus.Info("hit endpoint /users/panic")
 	panic("panic")
+}
+
+func GetWorker(w http.ResponseWriter, r *http.Request) {
+	logrus.Info("hit endpoint /workers ")
+	workers := []model.Worker{
+		{
+			ID:   1,
+			Name: "worker 1",
+		},
+		{
+			ID:   2,
+			Name: "worker 2",
+		},
+	}
+
+	resp := response.SuccessResp{
+		Data:       workers,
+		StatusCode: http.StatusOK,
+	}
+
+	respByte, err := resp.ChangToByte()
+	if err != nil {
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	_, err = w.Write(respByte)
+	if err != nil {
+		log.Printf("failed to create response, err: %s", err)
+	}
 }
