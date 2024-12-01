@@ -38,7 +38,8 @@ jobs:
     needs: build_app
     runs-on: ubuntu-20.04
     outputs:
-      template_name: ${{ steps.template_and_tag.outputs.TEMPLATE_NAME }}
+      app_template_name: ${{ steps.template_and_tag.outputs.APP_TEMPLATE_NAME }}
+      worker_template_name: ${{ steps.template_and_tag.outputs.WORKER_TEMPLATE_NAME }}
     steps:
       - name: checkout code
         uses: actions/checkout@v4 
@@ -61,11 +62,12 @@ jobs:
         run: |
           CURRENT_DATE=$(date +%Y-%m-%d-%H-%M-%S)
           TAG="version-$CURRENT_DATE"
-          TEMPLATE_NAME="go-autoscale-cicd-$CURRENT_DATE"
+          APP_TEMPLATE_NAME="go-autoscale-cicd-app-$CURRENT_DATE"
+          WORKER_TEMPLATE_NAME="go-autoscale-cicd-worker-$CURRENT_DATE"
           echo $TEMPLATE_NAME
           echo "TAG=$TAG" >> $GITHUB_ENV  # Set TAG as an environment variable
-          echo "TEMPLATE_NAME=$TEMPLATE_NAME" >> $GITHUB_ENV  # Set TEMPLATE_NAME as an environment variable to use by same job
-          echo "TEMPLATE_NAME=$TEMPLATE_NAME" >> $GITHUB_OUTPUT  # Set TEMPLATE_NAME as output to use by another job
+          echo "APP_TEMPLATE_NAME=$APP_TEMPLATE_NAME" >> $GITHUB_OUTPUT  # Set TEMPLATE_NAME as output to use by another job
+          echo "WORKER_TEMPLATE_NAME=$WORKER_TEMPLATE_NAME" >> $GITHUB_OUTPUT  # Set TEMPLATE_NAME as output to use by another job
 
       - name: Build Docker image
         run: |
@@ -89,7 +91,8 @@ jobs:
     needs: build_and_push_docker_image
     runs-on: ubuntu-20.04
     env:
-      instance_template: ${{ needs.build_and_push_docker_image.outputs.template_name }}
+      app_instance_template: ${{ needs.build_and_push_docker_image.outputs.app_template_name }}
+      worker_instance_template: ${{ needs.build_and_push_docker_image.outputs.worker_template_name }}
     steps:
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v1
@@ -99,13 +102,24 @@ jobs:
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
      
-      - name: Create instance template based on docker image
+      - name: Create app instance template based on docker image
         run: |
-          gcloud compute instance-templates create-with-container $instance_template \
+          gcloud compute instance-templates create-with-container $app_instance_template \
             --container-image=asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/$APP_NAME:$TAG \
             --region=asia-southeast2 \
             --network-interface=network=bab-lb-network,subnet=lb-jakarta \
             --tags=allow-ssh,lb-backend \
+            --container-arg="start-app" \
+            --machine-type=n1-standard-1 
+
+      - name: Create worker instance template based on docker image
+        run: |
+          gcloud compute instance-templates create-with-container $worker_instance_template \
+            --container-image=asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/$APP_NAME:$TAG \
+            --region=asia-southeast2 \
+            --network-interface=network=bab-lb-network,subnet=lb-jakarta \
+            --tags=allow-ssh,lb-backend \
+            --container-arg="start-worker" \
             --machine-type=n1-standard-1 
 
       - name: Update managed instance app group
