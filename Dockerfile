@@ -1,4 +1,4 @@
-FROM golang:latest
+FROM golang:1.23.3-alpine3.20
 
 ARG APP_PORT
 ARG WORKER_PORT
