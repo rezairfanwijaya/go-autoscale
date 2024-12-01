@@ -15,16 +15,8 @@ COPY ${APP_NAME} .
 RUN ls -l
 
 EXPOSE ${APP_PORT}
-# EXPOSE ${WORKER_PORT}
+EXPOSE ${WORKER_PORT}
 
-# ENTRYPOINT ./${APP_NAME}
-
-RUN echo ${APP_PORT}
-
-RUN pwd
-
-# RUN chmod +x ${APP_NAME}
 ENTRYPOINT [ "./go-autoscale" ]
 
-# ENTRYPOINT ["/bin/bash", "-c", "./$APP_NAME \"$@\"", "--"]
 CMD ["start-app"]

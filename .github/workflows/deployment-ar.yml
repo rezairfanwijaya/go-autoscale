@@ -123,21 +123,21 @@ jobs:
             --replacement-method=recreate \
             --zone=asia-southeast2-a 
 
-      # - name: Create worker instance template based on docker image
-      #   run: |
-      #     gcloud compute instance-templates create-with-container $worker_instance_template \
-      #       --container-image=asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/$APP_NAME:$TAG \
-      #       --region=asia-southeast2 \
-      #       --network-interface=network=bab-lb-network,subnet=lb-jakarta \
-      #       --tags=allow-ssh,lb-backend \
-      #       --machine-type=n1-standard-1 
+      - name: Create worker instance template based on docker image
+        run: |
+          gcloud compute instance-templates create-with-container $worker_instance_template \
+            --container-image=asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/$APP_NAME:$docker_image_tag \
+            --region=asia-southeast2 \
+            --network-interface=network=bab-lb-network,subnet=lb-jakarta \
+            --tags=allow-ssh,lb-backend \
+            --machine-type=n1-standard-1 
 
-      # - name: Update managed instance worker group
-      #   run: |
-      #     gcloud compute instance-groups managed rolling-action start-update go-autoscale-group-cicd-worker \
-      #       --version=template=$worker_instance_template \
-      #       --project=${{ secrets.GCP_PROJECT_ID }} \
-      #       --max-unavailable=1 \
-      #       --max-surge=0 \
-      #       --replacement-method=recreate \
-      #       --zone=asia-southeast2-a 
+      - name: Update managed instance worker group
+        run: |
+          gcloud compute instance-groups managed rolling-action start-update go-autoscale-group-cicd-worker \
+            --version=template=$worker_instance_template \
+            --project=${{ secrets.GCP_PROJECT_ID }} \
+            --max-unavailable=1 \
+            --max-surge=0 \
+            --replacement-method=recreate \
+            --zone=asia-southeast2-a 
