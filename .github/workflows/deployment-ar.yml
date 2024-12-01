@@ -130,7 +130,7 @@ jobs:
             --region=asia-southeast2 \
             --network-interface=network=bab-lb-network,subnet=lb-jakarta \
             --tags=allow-ssh,lb-backend \
-            --container-arg="start-worker"
+            --container-arg="start-worker" \
             --machine-type=n1-standard-1 
 
       - name: Update managed instance worker group
