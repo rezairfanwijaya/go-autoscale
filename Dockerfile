@@ -23,6 +23,7 @@ RUN echo ${APP_PORT}
 
 RUN pwd
 
+RUN chmod +x ${APP_NAME}
 ENTRYPOINT [ "./go-autoscale" ]
 
 # ENTRYPOINT ["/bin/bash", "-c", "./$APP_NAME \"$@\"", "--"]
