@@ -6,7 +6,8 @@ on:
      - 'main'
 
 env: 
-  PORT: ${{ vars.PORT }}
+  APP_PORT: ${{ vars.APP_PORT }}
+  WORKER_PORT: ${{ vars.WORKER_PORT }}
   APP_NAME: ${{ vars.APP_NAME }}
 
 jobs: 
@@ -69,7 +70,11 @@ jobs:
       - name: Build Docker image
         run: |
           docker --version
-          docker build --build-arg PORT=$PORT --build-arg APP_NAME=$APP_NAME -t asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/$APP_NAME:$TAG .
+          docker build \
+          --build-arg APP_PORT=$APP_PORT \
+          --build-arg WORKER_PORT=$WORKER_PORT \
+          --build-arg APP_NAME=$APP_NAME \
+          -t asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/$APP_NAME:$TAG .
       
       - name: Authenticate docker push to registry
         run: |
