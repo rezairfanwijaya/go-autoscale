@@ -129,12 +129,12 @@ jobs:
             --replacement-method=recreate \
             --zone=asia-southeast2-a 
 
-      - name: Update managed instance worker group
-        run: |
-          gcloud compute instance-groups managed rolling-action start-update go-autoscale-group-cicd-worker \
-            --version=template=$worker_instance_template \
-            --project=${{ secrets.GCP_PROJECT_ID }} \
-            --max-unavailable=1 \
-            --max-surge=0 \
-            --replacement-method=recreate \
-            --zone=asia-southeast2-a 
+      # - name: Update managed instance worker group
+      #   run: |
+      #     gcloud compute instance-groups managed rolling-action start-update go-autoscale-group-cicd-worker \
+      #       --version=template=$worker_instance_template \
+      #       --project=${{ secrets.GCP_PROJECT_ID }} \
+      #       --max-unavailable=1 \
+      #       --max-surge=0 \
+      #       --replacement-method=recreate \
+      #       --zone=asia-southeast2-a 

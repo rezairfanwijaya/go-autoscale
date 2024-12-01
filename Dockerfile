@@ -17,7 +17,9 @@ RUN ls -l
 EXPOSE ${APP_PORT}
 EXPOSE ${WORKER_PORT}
 
-ENTRYPOINT ./${APP_NAME}
+# ENTRYPOINT ./${APP_NAME}
+
+ENTRYPOINT [ "./go-autoscale" ]
 
 # ENTRYPOINT ["/bin/bash", "-c", "./$APP_NAME \"$@\"", "--"]
-# CMD ["start-app"]
+CMD ["start-app"]
