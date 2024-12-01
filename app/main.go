@@ -57,8 +57,8 @@ func getEnv() map[string]string {
 	}
 
 	return map[string]string{
-		"APP_PORT":     v.GetString("APP_PORT"),
-		"WORKER_PORT":     v.GetString("WORKER_PORT"),
-		"APP_NAME": v.GetString("APP_NAME"),
+		"APP_PORT":    v.GetString("APP_PORT"),
+		"WORKER_PORT": v.GetString("WORKER_PORT"),
+		"APP_NAME":    v.GetString("APP_NAME"),
 	}
 }

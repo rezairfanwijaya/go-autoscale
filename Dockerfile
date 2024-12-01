@@ -19,6 +19,10 @@ EXPOSE ${APP_PORT}
 
 # ENTRYPOINT ./${APP_NAME}
 
+RUN echo ${APP_PORT}
+
+RUN pwd
+
 ENTRYPOINT [ "./go-autoscale" ]
 
 # ENTRYPOINT ["/bin/bash", "-c", "./$APP_NAME \"$@\"", "--"]
