@@ -17,7 +17,7 @@ RUN ls -l
 EXPOSE ${APP_PORT}
 EXPOSE ${WORKER_PORT}
 
-# ENTRYPOINT ./${APP_NAME}
+ENTRYPOINT ./${APP_NAME}
 
-ENTRYPOINT ["/bin/bash", "-c", "./$APP_NAME \"$@\"", "--"]
-CMD ["start-app"]
+# ENTRYPOINT ["/bin/bash", "-c", "./$APP_NAME \"$@\"", "--"]
+# CMD ["start-app"]
