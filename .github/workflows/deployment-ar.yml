@@ -63,8 +63,7 @@ jobs:
           CURRENT_DATE=$(date +%Y-%m-%d-%H-%M-%S)
           TAG="version-$CURRENT_DATE"
           APP_TEMPLATE_NAME="go-autoscale-cicd-app-$CURRENT_DATE"
-          WORKER_TEMPLATE_NAME="go-autoscale-cicd-worker-$CURRENT_DATE"
-          echo $TEMPLATE_NAME
+          WORKER_TEMPLATE_NAME="go-autoscale-cicd-worker-$CURRENT_DATE"ma
           echo "TAG=$TAG" >> $GITHUB_ENV  # Set TAG as an environment variable
           echo "APP_TEMPLATE_NAME=$APP_TEMPLATE_NAME" >> $GITHUB_OUTPUT  # Set TEMPLATE_NAME as output to use by another job
           echo "WORKER_TEMPLATE_NAME=$WORKER_TEMPLATE_NAME" >> $GITHUB_OUTPUT  # Set TEMPLATE_NAME as output to use by another job
@@ -109,7 +108,6 @@ jobs:
             --region=asia-southeast2 \
             --network-interface=network=bab-lb-network,subnet=lb-jakarta \
             --tags=allow-ssh,lb-backend \
-            --container-arg="start-app" \
             --machine-type=n1-standard-1 
 
       - name: Create worker instance template based on docker image
@@ -119,7 +117,6 @@ jobs:
             --region=asia-southeast2 \
             --network-interface=network=bab-lb-network,subnet=lb-jakarta \
             --tags=allow-ssh,lb-backend \
-            --container-arg="start-worker" \
             --machine-type=n1-standard-1 
 
       - name: Update managed instance app group
