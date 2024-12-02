@@ -3,7 +3,7 @@ name: Proper Deployment Golang Auto Scale
 on:
   push:
     branches:
-     - 'main'
+     - 'feat/image-tag-as-realease-tag'
 
 env: 
   APP_PORT: ${{ vars.APP_PORT }}
