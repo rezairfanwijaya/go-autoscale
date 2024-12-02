@@ -25,6 +25,7 @@ jobs:
 
       - name: Build binary
         run: |
+          echo github tag: ${{ github.ref }}
           go build -o go-autoscale
       
       - name: Upload artifacts
