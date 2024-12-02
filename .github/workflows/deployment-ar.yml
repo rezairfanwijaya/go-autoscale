@@ -74,7 +74,7 @@ jobs:
         run: |
           docker --version
           echo $APP_PORT
-          echo env.APP_PORT
+          echo ${{env.APP_PORT}}
           docker build \
           --build-arg APP_PORT=$APP_PORT \
           --build-arg WORKER_PORT=$WORKER_PORT \
