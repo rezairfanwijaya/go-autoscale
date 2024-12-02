@@ -25,7 +25,7 @@ jobs:
 
       - name: Build binary
         run: |
-          echo github tag: ${{ github.ref }}
+          echo github tag: $(git describe --tags)
           go build -o go-autoscale
       
       - name: Upload artifacts
@@ -35,111 +35,111 @@ jobs:
           path: |
             ${{ env.APP_NAME }}
       
-  build_and_push_docker_image:
-    needs: build_app
-    runs-on: ubuntu-20.04
-    outputs:
-      app_template_name: ${{ steps.template_and_tag.outputs.APP_TEMPLATE_NAME }}
-      worker_template_name: ${{ steps.template_and_tag.outputs.WORKER_TEMPLATE_NAME }}
-      docker_image_tag: ${{ steps.template_and_tag.outputs.TAG}}
-    steps:
-      - name: checkout code
-        uses: actions/checkout@v4 
+  # build_and_push_docker_image:
+  #   needs: build_app
+  #   runs-on: ubuntu-20.04
+  #   outputs:
+  #     app_template_name: ${{ steps.template_and_tag.outputs.APP_TEMPLATE_NAME }}
+  #     worker_template_name: ${{ steps.template_and_tag.outputs.WORKER_TEMPLATE_NAME }}
+  #     docker_image_tag: ${{ steps.template_and_tag.outputs.TAG}}
+  #   steps:
+  #     - name: checkout code
+  #       uses: actions/checkout@v4 
 
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.APP_NAME }}-artifacts
+  #     - name: Download artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: ${{ env.APP_NAME }}-artifacts
 
-      - name: Authenticate with Google Cloud
-        uses: google-github-actions/auth@v1
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+  #     - name: Authenticate with Google Cloud
+  #       uses: google-github-actions/auth@v1
+  #       with:
+  #         credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
+  #     - name: Set up Google Cloud SDK
+  #       uses: google-github-actions/setup-gcloud@v2
 
-      - name: Set the TAG value
-        id: template_and_tag
-        run: |
-          CURRENT_DATE=$(date +%Y-%m-%d-%H-%M-%S)
-          TAG="version-$CURRENT_DATE"
-          APP_TEMPLATE_NAME="go-autoscale-cicd-app-$CURRENT_DATE"
-          WORKER_TEMPLATE_NAME="go-autoscale-cicd-worker-$CURRENT_DATE"ma
-          echo "TAG=$TAG" >> $GITHUB_ENV  # Set TAG as an environment variable
-          echo "TAG=$TAG" >> $GITHUB_OUTPUT  # Set TAG as an environment variable
-          echo "APP_TEMPLATE_NAME=$APP_TEMPLATE_NAME" >> $GITHUB_OUTPUT  # Set TEMPLATE_NAME as output to use by another job
-          echo "WORKER_TEMPLATE_NAME=$WORKER_TEMPLATE_NAME" >> $GITHUB_OUTPUT  # Set TEMPLATE_NAME as output to use by another job
+  #     - name: Set the TAG value
+  #       id: template_and_tag
+  #       run: |
+  #         CURRENT_DATE=$(date +%Y-%m-%d-%H-%M-%S)
+  #         TAG="version-$CURRENT_DATE"
+  #         APP_TEMPLATE_NAME="go-autoscale-cicd-app-$CURRENT_DATE"
+  #         WORKER_TEMPLATE_NAME="go-autoscale-cicd-worker-$CURRENT_DATE"ma
+  #         echo "TAG=$TAG" >> $GITHUB_ENV  # Set TAG as an environment variable
+  #         echo "TAG=$TAG" >> $GITHUB_OUTPUT  # Set TAG as an environment variable
+  #         echo "APP_TEMPLATE_NAME=$APP_TEMPLATE_NAME" >> $GITHUB_OUTPUT  # Set TEMPLATE_NAME as output to use by another job
+  #         echo "WORKER_TEMPLATE_NAME=$WORKER_TEMPLATE_NAME" >> $GITHUB_OUTPUT  # Set TEMPLATE_NAME as output to use by another job
 
-      - name: Build Docker image
-        run: |
-          docker --version
-          docker build \
-          --build-arg APP_PORT=$APP_PORT \
-          --build-arg WORKER_PORT=$WORKER_PORT \
-          --build-arg APP_NAME=$APP_NAME \
-          -t asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/$APP_NAME:$TAG .
+  #     - name: Build Docker image
+  #       run: |
+  #         docker --version
+  #         docker build \
+  #         --build-arg APP_PORT=$APP_PORT \
+  #         --build-arg WORKER_PORT=$WORKER_PORT \
+  #         --build-arg APP_NAME=$APP_NAME \
+  #         -t asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/$APP_NAME:$TAG .
       
-      - name: Authenticate docker push to registry
-        run: |
-          gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
-          gcloud auth configure-docker asia-southeast2-docker.pkg.dev
+  #     - name: Authenticate docker push to registry
+  #       run: |
+  #         gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+  #         gcloud auth configure-docker asia-southeast2-docker.pkg.dev
 
-      - name: Push Docker image to Artifact Registry
-        run: |
-          docker push asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/$APP_NAME:$TAG
+  #     - name: Push Docker image to Artifact Registry
+  #       run: |
+  #         docker push asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/$APP_NAME:$TAG
   
-  update_instance_group:
-    needs: build_and_push_docker_image
-    runs-on: ubuntu-20.04
-    env:
-      app_instance_template: ${{ needs.build_and_push_docker_image.outputs.app_template_name }}
-      worker_instance_template: ${{ needs.build_and_push_docker_image.outputs.worker_template_name }}
-      docker_image_tag: ${{ needs.build_and_push_docker_image.outputs.docker_image_tag }}
-    steps:
-      - name: Authenticate with Google Cloud
-        uses: google-github-actions/auth@v1
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+  # update_instance_group:
+  #   needs: build_and_push_docker_image
+  #   runs-on: ubuntu-20.04
+  #   env:
+  #     app_instance_template: ${{ needs.build_and_push_docker_image.outputs.app_template_name }}
+  #     worker_instance_template: ${{ needs.build_and_push_docker_image.outputs.worker_template_name }}
+  #     docker_image_tag: ${{ needs.build_and_push_docker_image.outputs.docker_image_tag }}
+  #   steps:
+  #     - name: Authenticate with Google Cloud
+  #       uses: google-github-actions/auth@v1
+  #       with:
+  #         credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
+  #     - name: Set up Google Cloud SDK
+  #       uses: google-github-actions/setup-gcloud@v2
      
-      - name: Create app instance template based on docker image
-        run: |
-          gcloud compute instance-templates create-with-container $app_instance_template \
-            --container-image=asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/$APP_NAME:$docker_image_tag \
-            --region=asia-southeast2 \
-            --network-interface=network=bab-lb-network,subnet=lb-jakarta \
-            --tags=allow-ssh,lb-backend \
-            --machine-type=n1-standard-1 
+  #     - name: Create app instance template based on docker image
+  #       run: |
+  #         gcloud compute instance-templates create-with-container $app_instance_template \
+  #           --container-image=asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/$APP_NAME:$docker_image_tag \
+  #           --region=asia-southeast2 \
+  #           --network-interface=network=bab-lb-network,subnet=lb-jakarta \
+  #           --tags=allow-ssh,lb-backend \
+  #           --machine-type=n1-standard-1 
 
-      - name: Update managed instance app group
-        run: |
-          gcloud compute instance-groups managed rolling-action start-update go-autoscale-group-cicd \
-            --version=template=$app_instance_template \
-            --project=${{ secrets.GCP_PROJECT_ID }} \
-            --max-unavailable=1 \
-            --max-surge=0 \
-            --replacement-method=recreate \
-            --zone=asia-southeast2-a 
+  #     - name: Update managed instance app group
+  #       run: |
+  #         gcloud compute instance-groups managed rolling-action start-update go-autoscale-group-cicd \
+  #           --version=template=$app_instance_template \
+  #           --project=${{ secrets.GCP_PROJECT_ID }} \
+  #           --max-unavailable=1 \
+  #           --max-surge=0 \
+  #           --replacement-method=recreate \
+  #           --zone=asia-southeast2-a 
 
-      - name: Create worker instance template based on docker image
-        run: |
-          gcloud compute instance-templates create-with-container $worker_instance_template \
-            --container-image=asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/$APP_NAME:$docker_image_tag \
-            --region=asia-southeast2 \
-            --network-interface=network=bab-lb-network,subnet=lb-jakarta \
-            --tags=allow-ssh,lb-backend \
-            --container-arg="start-worker" \
-            --machine-type=n1-standard-1 
+  #     - name: Create worker instance template based on docker image
+  #       run: |
+  #         gcloud compute instance-templates create-with-container $worker_instance_template \
+  #           --container-image=asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/$APP_NAME:$docker_image_tag \
+  #           --region=asia-southeast2 \
+  #           --network-interface=network=bab-lb-network,subnet=lb-jakarta \
+  #           --tags=allow-ssh,lb-backend \
+  #           --container-arg="start-worker" \
+  #           --machine-type=n1-standard-1 
 
-      - name: Update managed instance worker group
-        run: |
-          gcloud compute instance-groups managed rolling-action start-update go-autoscale-group-cicd-worker \
-            --version=template=$worker_instance_template \
-            --project=${{ secrets.GCP_PROJECT_ID }} \
-            --max-unavailable=1 \
-            --max-surge=0 \
-            --replacement-method=recreate \
-            --zone=asia-southeast2-a 
+  #     - name: Update managed instance worker group
+  #       run: |
+  #         gcloud compute instance-groups managed rolling-action start-update go-autoscale-group-cicd-worker \
+  #           --version=template=$worker_instance_template \
+  #           --project=${{ secrets.GCP_PROJECT_ID }} \
+  #           --max-unavailable=1 \
+  #           --max-surge=0 \
+  #           --replacement-method=recreate \
+  #           --zone=asia-southeast2-a 
