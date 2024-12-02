@@ -12,6 +12,7 @@ env:
 
 jobs: 
   check_tag:
+    runs-on: ubuntu-20.04
     steps:
       run: echo ${{ github.ref }}
   # build_app:
